@@ -1,8 +1,8 @@
 ﻿## Title: SimpleCastbar
-## APIVersion: 100027
+## APIVersion: 100033 100034
 ## Author: Solinur
-## Version: 1.1
-## AddOnVersion: 10100
+## Version: 1.2
+## AddOnVersion: 10200
 ## DependsOn: LibCombat
 ## OptionalDependsOn:
 ## SavedVariables: 

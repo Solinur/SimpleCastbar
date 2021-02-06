@@ -4,14 +4,13 @@ local getms = GetGameTimeMilliseconds
 local TimerBar
 local offset = 15
 local dx = 1 / (tonumber(GetCVar("WindowedWidth")) / GuiRoot:GetWidth())
-local HPDot
 SIMPLE_CASTBAR_LINE_SIZE = tostring(dx)
 
 SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = 1.1
+SCB.version = 1.2
 
 local LC = LibCombat
 if not LibCombat then return end
@@ -61,6 +60,7 @@ local lastQueuedAbilities = {}
 local red = ZO_ColorDef:New(1, 0, 0)
 local green = ZO_ColorDef:New(0, 0.95, 0.1)
 local yellow = ZO_ColorDef:New(1, 1, 0)
+local grey = ZO_ColorDef:New(.4, .4, .4)
 
 local isLastAttackLightAttack = false
 local lastSkillEnd = 0
@@ -68,9 +68,23 @@ local secondLastSkillEnd = 0
 
 local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
+    TimerBarcontrol = TimerBar.control
+    local barControl = TimerBarcontrol:GetNamedChild("Status")
+    local slot = reducedslot % 10
+
     if status == LIBCOMBAT_SKILLSTATUS_REGISTERED then
 
         lastSlotUses[reducedslot] = timems
+
+        local lineControl = TimerBarcontrol:GetNamedChild(slot == 1 and "LineLA" or "LineSkill")
+
+        local pos = barControl:GetValue() * barControl:GetWidth()
+
+        lineControl:ClearAnchors()
+        lineControl:SetAnchor(TOP, barControl, TOPLEFT, pos)
+        lineControl:SetAnchor(BOTTOM, barControl, BOTTOMLEFT, pos)
+        lineControl:SetAlpha(1)
+
         return
 
     elseif status == LIBCOMBAT_SKILLSTATUS_QUEUE then
@@ -82,17 +96,12 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
     -- local timems = timems - GetLatency() + offset
 
-    local slot = reducedslot % 10
-
-    TimerBarcontrol = TimerBar.control
-
-    local barControl = TimerBarcontrol:GetNamedChild("Status")
-    local lineControl = TimerBarcontrol:GetNamedChild("Line")
+    local lineControl = TimerBarcontrol:GetNamedChild("LineDelay")
 
     if slot == 1 then
 
         isLastAttackLightAttack = true
-
+        --[[
         if timems + 300 < lastSkillEnd then
 
             local LAtime = timems - secondLastSkillEnd
@@ -100,7 +109,9 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
             lineControl:SetHidden(false)
             lineControl:SetColor(color:UnpackRGB())
-        end
+        else
+            lineControl:SetColor(grey:UnpackRGB())
+        end--]]
     else
 
         local abilityName = GetFormattedAbilityName(abilityId)
@@ -137,6 +148,12 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
             Print("%s starts", abilityName)
 
+            local LAline = TimerBarcontrol:GetNamedChild("LineLA")
+            local SkillLine = TimerBarcontrol:GetNamedChild("LineSkill")
+
+            if LAline:GetAlpha() < 0.9 then LAline:SetAlpha(0) else LAline:SetAlpha(0.8) end
+            if SkillLine:GetAlpha() < 0.9 then SkillLine:SetAlpha(0) else SkillLine:SetAlpha(0.8) end
+
         end
 
         local useTime = math.max(lastSlotUses[reducedslot], lastQueuedAbilities[abilityId] or 0)
@@ -156,7 +173,7 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
             lineControl:SetAnchor(TOP, barControl, TOPLEFT, pos)
             lineControl:SetAnchor(BOTTOM, barControl, BOTTOMLEFT, pos)
             lineControl:SetHidden(false)
-            lineControl:SetColor(color:UnpackRGB())
+            TimerBarcontrol:GetNamedChild("Backdrop"):SetEdgeColor(color:UnpackRGB())
 
         else
 
@@ -249,9 +266,6 @@ local function Initialize(event, addon)
     end
 
     showTimerBar()
-
-    RecDot = SimpleCastbar_Rec
-    RecDot.inner = RecDot:GetNamedChild("Inner")
 
     SLASH_COMMANDS["/scb"] = showTimerBar
 
