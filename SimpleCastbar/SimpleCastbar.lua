@@ -177,7 +177,7 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
         else
 
-            TimerBarcontrol:GetNamedChild("Line"):SetHidden(true)
+            TimerBarcontrol:GetNamedChild("LineDelay"):SetHidden(true)
 
         end
 
