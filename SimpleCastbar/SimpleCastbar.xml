@@ -1,11 +1,11 @@
 <GuiXml>
 	<Controls>	
 		
-		<TopLevelControl name="SimpleCastbar_TLW" clampedToScreen="true" mouseEnabled="true" movable="true">
+		<TopLevelControl name="SimpleCastbar_TLW" clampedToScreen="true">
 		
 			<Dimensions x="300" y="32" />
 			<Anchor point="BOTTOM" relativePoint="BOTTOM" offsetY="-160"/>
-			
+
 			<Controls>
 			
 				<Backdrop name="$(parent)Backdrop2" centerColor="FF222222" edgeColor="00000000">
@@ -54,12 +54,26 @@
 
 				</Line>
 
+				<!-- <Texture name="$(parent)IconLA" color="FFfd5d27" layer="2">
+
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Status" offsetX="100"/>
+					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)Status" offsetX="100"/>
+
+				</Texture> -->
+
 				<Line name="$(parent)LineLA" color="FFfd5d27" thickness="2.667" layer="2">
 
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Status" offsetX="100"/>
 					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)Status" offsetX="100"/>
 
 				</Line>
+
+				<!-- <Texture name="$(parent)IconSkill" color="FFfd5d27" layer="2">
+
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Status" offsetX="100"/>
+					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)Status" offsetX="100"/>
+
+				</Texture> -->
 
 				<Line name="$(parent)LineSkill" color="FF9eec15" thickness="2.667" layer="2">
 
