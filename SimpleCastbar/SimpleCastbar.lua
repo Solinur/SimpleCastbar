@@ -9,7 +9,7 @@ SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = 1.3
+SCB.version = "1.3"
 SCB.internal = {}
 local SCBint = SCB.internal
 SCBint.isCastbarMoveable = false
@@ -258,10 +258,13 @@ local function SetAccountwideSV(value)
     end
 end
 
+local emKeyHideDelayed = SCB.name .. "_HideCastbarDelayed"  -- key for registering delayed hiding of the cast bar
+
 local function ToggleCastbarMoveable()
 
     if SCBint.isCastbarMoveable == true then
 
+        em:UnregisterForUpdate(emKeyHideDelayed)
         SimpleCastbar_TLW:SetMouseEnabled(true)
         SimpleCastbar_TLW:SetMovable(true)
         SimpleCastbar_TLW:SetHidden(false)
@@ -275,12 +278,16 @@ local function ToggleCastbarMoveable()
     end
 end
 
-local emKeyHideDelayed = SCB.name .. "_HideCastbarDelayed"
-
 local function TemporaryShowCastbar(hideDelay)
+
     SimpleCastbar_TLW:SetHidden(false)
     em:UnregisterForUpdate(emKeyHideDelayed)
-    em:RegisterForUpdate(emKeyHideDelayed, hideDelay, function() SimpleCastbar_TLW:SetHidden(true) end)
+
+    em:RegisterForUpdate(emKeyHideDelayed, hideDelay, function()
+        em:UnregisterForUpdate(emKeyHideDelayed)
+        if SCBint.isCastbarMoveable == true then return end
+        SimpleCastbar_TLW:SetHidden(true)
+    end)
 end
 
 local function ApplySettingsToCastbar()
@@ -361,7 +368,7 @@ local function MakeMenu()
             setFunc = function(value)
                 SCBint.sv.hideOuterBg = value
                 ApplySettingsToCastbar()
-                TemporaryShowCastbar(2000)
+                TemporaryShowCastbar(5000)
             end
         },
         {
@@ -377,7 +384,7 @@ local function MakeMenu()
 
                 sv.castbarSize = value
                 ApplySettingsToCastbar()
-                TemporaryShowCastbar(2000)
+                TemporaryShowCastbar(5000)
 
             end,
         },
