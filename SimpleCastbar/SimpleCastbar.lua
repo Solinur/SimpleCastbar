@@ -9,7 +9,7 @@ SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = "1.3"
+SCB.version = "1.3.1"
 SCB.internal = {}
 local SCBint = SCB.internal
 SCBint.isCastbarMoveable = false
@@ -295,8 +295,10 @@ local function ApplySettingsToCastbar()
     ---@type TopLevelWindow
     local tlw = SimpleCastbar_TLW
     local outerBg = tlw:GetNamedChild("Backdrop2")
+
     local timeLabel = tlw:GetNamedChild("Time")
-    local icon = tlw:GetNamedChild("Backdrop2")
+    local icon = tlw:GetNamedChild("Icon")
+
     local abilityLabel = tlw:GetNamedChild("Label")
 
     tlw:SetAnchor(BOTTOM, GuiRoot, BOTTOM, SCBint.sv.castbarPosX, SCBint.sv.castbarPosY)
@@ -307,8 +309,15 @@ local function ApplySettingsToCastbar()
     tlw:SetDimensions(300 * scale, 32 * scale)
     outerBg:SetAnchor(BOTTOMRIGHT, nil, nil, 100 * scale, 4)
     timeLabel:SetWidth(50*scale)
-    icon:SetDimensions(32*scale*8, 32*scale*8)
+    icon:SetDimensions(32*scale-8, 32*scale-8)
     abilityLabel:SetAnchor(TOPLEFT, nil, nil, 32 * scale)
+
+    local fontsize = math.floor(scale*20)
+    local fontstring = string.format("$(MEDIUM_FONT)|$(KB_%d)|soft-shadow-thin", fontsize)
+
+    timeLabel:SetFont(fontstring)
+    abilityLabel:SetFont(fontstring)
+
 end
 
 local svdefaults = {
