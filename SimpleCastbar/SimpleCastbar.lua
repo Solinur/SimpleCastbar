@@ -9,7 +9,7 @@ SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = "1.3.1"
+SCB.version = "1.3.2"
 SCB.internal = {}
 local SCBint = SCB.internal
 SCBint.isCastbarMoveable = false
@@ -36,8 +36,8 @@ local abilityDelay = {    -- Radiant Destruction and morphs have a 100ms delay a
     [63044] = 100,
     [63029] = 100,
     [63046] = 100,
-    [26797] = 50,
-    [38857] = 200
+    -- [26797] = 50,
+    -- [38857] = 200
 }
 
 local ignoredAbilities = {    -- for stuff that's off the GCD
