@@ -1,7 +1,5 @@
 local em = GetEventManager()
 local _
-local getms = GetGameTimeMilliseconds
-local offset = 15
 local dx = 1 / (tonumber(GetCVar("WindowedWidth")) / GuiRoot:GetWidth())
 SIMPLE_CASTBAR_LINE_SIZE = tostring(dx)
 
@@ -9,15 +7,13 @@ SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = "1.3.2"
+SCB.version = "1.3.3"
 SCB.internal = {}
 local SCBint = SCB.internal
 SCBint.isCastbarMoveable = false
 
 local LC = LibCombat
 if not LibCombat then return end
-
-local LCdata = LibCombat.data
 
 local GetFormattedAbilityName = LC.GetFormattedAbilityName
 local GetFormattedAbilityIcon = LC.GetFormattedAbilityIcon
@@ -112,19 +108,21 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
         local abilityName = GetFormattedAbilityName(abilityId)
 
-        local duration = 1000
+        local totalDuration = 1000
 
         if status == LIBCOMBAT_SKILLSTATUS_BEGIN_DURATION or status == LIBCOMBAT_SKILLSTATUS_BEGIN_CHANNEL then
 
-            local channeled, castTime, channelTime = GetAbilityCastInfo(abilityId)
+            local _, durationValue = GetAbilityCastInfo(abilityId)
 
-            duration = math.max(channeled and channelTime or castTime, 1000)
+            local abilityDuration = math.max(durationValue or 0, 1000)
+            local abilityDelay = abilityDelay[abilityId] or 0
+            local latencyOffset = GetLatency()/2
 
-            duration = duration + (abilityDelay[abilityId] or 0) + GetLatency()/2
+            totalDuration = abilityDuration + abilityDelay + latencyOffset
 
         end
 
-        local endTime = timems + duration
+        local endTime = timems + totalDuration
 
         timerbar:SetLabel(abilityName)
 
@@ -152,7 +150,7 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
 
         local useTime = math.max(lastSlotUses[reducedslot], lastQueuedAbilities[abilityId] or 0)
 
-        local offsetTime = useTime and (useTime + duration) or endTime
+        local offsetTime = useTime and (useTime + totalDuration) or endTime
 
         if offsetTime > (timems + 400) then
 
