@@ -1,3 +1,6 @@
+1.3.4:  4,077 (12.11.2024) 23:46
+[*]Fixed an issue where duration changes of Exhausting Fatecarver were not updated.
+
 1.3.3: 2,859 (20.06.2024) 22:34
 [*]Minor code cleanup
 [*]Fix for a lua error due to API changes (Thx to dakjaniels for the report)

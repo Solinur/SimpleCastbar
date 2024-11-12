@@ -7,7 +7,7 @@ SCB = SCB or {}
 local SCB = SCB
 
 SCB.name = "SimpleCastbar"
-SCB.version = "1.3.3"
+SCB.version = "1.3.4"
 SCB.internal = {}
 local SCBint = SCB.internal
 SCBint.isCastbarMoveable = false
@@ -28,7 +28,7 @@ local function Print(message, ...)
 
 end
 
-local abilityDelay = {    -- Radiant Destruction and morphs have a 100ms delay after casting. 50ms for Jabs
+local abilityDelayData = {    -- Radiant Destruction and morphs have a 100ms delay after casting. 50ms for Jabs
     [63044] = 100,
     [63029] = 100,
     [63046] = 100,
@@ -64,7 +64,7 @@ local isLastAttackLightAttack = false
 local lastSkillEnd = 0
 local secondLastSkillEnd = 0
 
-local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
+local function OnSkillEvent(_, timems, reducedslot, abilityId, status, _, castTime)
 
     local timerbar = SCBint.timerbar
     local timerbarControl = timerbar.control
@@ -111,11 +111,11 @@ local function OnSkillEvent(_, timems, reducedslot, abilityId, status)
         local totalDuration = 1000
 
         if status == LIBCOMBAT_SKILLSTATUS_BEGIN_DURATION or status == LIBCOMBAT_SKILLSTATUS_BEGIN_CHANNEL then
-
             local _, durationValue = GetAbilityCastInfo(abilityId)
+            if castTime and castTime > 0 then durationValue = castTime end
 
             local abilityDuration = math.max(durationValue or 0, 1000)
-            local abilityDelay = abilityDelay[abilityId] or 0
+            local abilityDelay = abilityDelayData[abilityId] or 0
             local latencyOffset = GetLatency()/2
 
             totalDuration = abilityDuration + abilityDelay + latencyOffset
